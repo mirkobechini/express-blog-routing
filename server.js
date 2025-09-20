@@ -40,7 +40,7 @@ app.listen(PORT, () => {
 
 //Index (R)
 app.get("/api/posts", (req, res) => {
-    res.send(posts)
+    res.json(posts)
 })
 
 //Show (R)
