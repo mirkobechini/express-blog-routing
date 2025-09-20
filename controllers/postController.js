@@ -2,21 +2,32 @@
 const posts = require('../data/posts')
 
 function index(req, res) {
-    res.json(posts)
+    let filtered_posts= posts
+    if(req.query.title){
+        filtered_posts = posts.filter(post => post.title.includes(req.query.title))
+    }
+
+    res.json({
+        status: 200,
+        filtered_posts
+    })
 }
 
 function show(req, res) {
     
-    const post_id = req.params.id
-    const post = posts.find(post => post.id == parseInt(post_id)) 
+    const post_id = parseInt(req.params.id)
+    const post = posts.find(post => post.id == post_id) 
     if(!post){
-        res.status(404)
-        .json({
+        res.json({
+            status: 404,
             error: true,
             message: "Post not found"
         })
     }else{
-        res.json(post)
+        res.json({
+            status: 200,
+            post
+            })
     }
 }
 
@@ -34,7 +45,21 @@ function modify(req, res) {
 
 
 function destroy(req, res) {
-    res.send("Delete the single post with ID:" + req.params.id)
+   
+    const post_id = parseInt(req.params.id)
+   
+    const post = posts.find(post => post.id == post_id) 
+   
+    if(!post){
+        res.json({
+            status: 404,
+            error: true,
+            message: "Post not found"
+        })
+    }
+
+    posts.splice(posts.indexOf(post), 1)
+    res.sendStatus(204)
 }
 
 module.exports = {
